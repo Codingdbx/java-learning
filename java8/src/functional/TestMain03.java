@@ -1,72 +1,79 @@
 package functional;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * <p>Description: 将List类型抽象化</p>
+ * <p>Description: </p>
  *
  * @author dbx
- * @since 2021/4/23 16:44
+ * @since 2021/4/23 17:33
  */
 public class TestMain03 {
-    public static class Apple {
-        private String color;
-        private Integer weight;
 
-        public Apple(Integer weight,String color){
-            this.color = color;
-            this.weight = weight;
-        }
-
-        String getColor() {
-            return color;
-        }
-
-        Integer getWeight() {
-            return weight;
-        }
-
-    }
-
-
-    /**
-     * 谓词-行为,只有一个抽象方法的接口
-     */
-    public interface Predicate<T>{
-        boolean test (T t);
-        default boolean test2 (T t){
-            return false;
-        }
-    }
-
-    /**
-     * 引入类型参数T
-     * @param list
-     * @param p
-     * @param <T>
-     * @return
-     */
-    public static <T> List<T> filter(List<T> list, Predicate<T> p){
-        List<T> result = new ArrayList<>();
-        for(T e: list){
-            if(p.test(e)){
-                result.add(e);
+    public static <T> List<T> filter(List<T> list, Predicate<T> p) {
+        List<T> results = new ArrayList<>();
+        for(T s: list){
+            if(p.test(s)){
+                results.add(s);
             }
+        }
+        return results;
+    }
+
+    public static <T> void forEach(List<T> list, Consumer<T> c){
+        for(T i: list){
+            c.accept(i);
+        }
+    }
+
+    public static <T, R> List<R> map(List<T> list, Function<T, R> f) {
+        List<R> result = new ArrayList<>();
+        for(T s: list){
+            result.add(f.apply(s));
         }
         return result;
     }
 
+
     public static void main(String[] args) {
-        List<Apple> inventory = Arrays.asList(new Apple(80,"green"), new Apple(155, "green"), new Apple(120, "red"));
-        List<Apple> redApples = filter(inventory, (Apple apple) -> "red".equals(apple.getColor()));
+        List<String> listOfStrings = Arrays.asList("str0", "str1", "");
 
-        List<Integer> numbers = Arrays.asList(12,15,20);
-        List<Integer> evenNumbers = filter(numbers, (Integer i) -> i % 2 == 0);
+        /**
+         * Predicate<T>
+         * 接口定义了一个名叫test的抽象方法，它接受泛型T对象，并返回一个boolean。在你需要表示一个涉及类型T的布尔表达式时，就可以使用这个接口。
+         */
+
+        Predicate<String> nonEmptyStringPredicate = (String s) -> !s.isEmpty();
+        List<String> nonEmpty = filter(listOfStrings, nonEmptyStringPredicate);
 
 
+        /**
+         *  Consumer<T>
+         *  定义了一个名叫accept的抽象方法，它接受泛型T的对象，没有返回（void）。你如果需要访问类型T的对象，并对其执行某些操作，就可以使用这个接口。
+         *
+         */
+        forEach(Arrays.asList(1,2,3,4,5), (Integer i) ->
+                System.out.println(i)    //←─Lambda是Consumer中accept方法的实现
+        );
+
+        /**
+         * Function<T, R>
+         * 接口定义了一个叫作apply的方法，它接受一个泛型T的对象，并返回一个泛型R的对象。如果你需要定义一个Lambda，
+         * 将输入对象的信息映射到输出，就可以使用这个接口（比如提取苹果的重量，或把字符串映射为它的长度）。
+         */
+        // [7, 2, 6]
+        List<Integer> list = map(Arrays.asList("lambdas","in","action"),
+                (String s) -> s.length()    //←─Lambda是Function接口的apply方法的实现
+        );
 
     }
+
+
+
 }

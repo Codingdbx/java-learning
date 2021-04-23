@@ -1,121 +1,28 @@
 package functional;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * <p>Description: 原始写法</p>
+ * <p>Description: 函数式接口</p>
  *
  * @author dbx
- * @since 2021/4/23 16:13
+ * @since 2021/4/23 17:09
  */
 public class TestMain01 {
 
-    public static class Apple {
-        private String color;
-        private Integer weight;
-
-        public Apple(String color,Integer weight){
-            this.color = color;
-            this.weight = weight;
-        }
-
-
-        String getColor() {
-            return color;
-        }
-
-        Integer getWeight() {
-            return weight;
-        }
-
-    }
-
-    /**
-     * 筛选绿苹果
-     * @param inventory
-     * @return
-     */
-    public static List<Apple> filterGreenApples(List<Apple> inventory) {
-        List<Apple> result = new ArrayList<>();
-        for(Apple apple: inventory){
-            if( "green".equals(apple.getColor())){
-                result.add(apple);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * 把颜色作为参数
-     * @param inventory
-     * @param color
-     * @return
-     */
-    public static List<Apple> filterApplesByColor(List<Apple> inventory,
-                                                  String color) {
-        List<Apple> result = new ArrayList<>();
-        for (Apple apple: inventory){
-            if ( apple.getColor().equals(color) ) {
-                result.add(apple);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * 把重量作为参数
-     * @param inventory
-     * @param weight
-     * @return
-     */
-    public static List<Apple> filterApplesByWeight(List<Apple> inventory,
-                                                   int weight) {
-        List<Apple> result = new ArrayList<>();
-
-        for(Apple apple : inventory){
-            if ( apple.getWeight() > weight ){
-                result.add(apple);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * 把颜色和重量作为参数
-     * @param inventory
-     * @param color
-     * @param weight
-     * @param flag
-     * @return
-     */
-    public static List<Apple> filterApples(List<Apple> inventory, String color,
-                                           int weight, boolean flag) {
-        List<Apple> result = new ArrayList<>();
-        for (Apple apple: inventory){
-            if ( (flag && apple.getColor().equals(color)) || (!flag && apple.getWeight() > weight) ){
-                result.add(apple);
-            }
-        }
-        return result;
+    public static void process(Runnable r){
+        r.run();
     }
 
     public static void main(String[] args) {
-        List<Apple> inventory = new ArrayList<>();
-        inventory.add(new Apple("green", 150));
-        inventory.add(new Apple("red", 100));
+        Runnable r1 = () -> System.out.println("Hello World 1");    ///←─使用Lambda
 
-        List<Apple> apples0 = filterGreenApples(inventory);
+        Runnable r2 = new Runnable(){   // ←─使用匿名类
+            public void run(){
+                System.out.println("Hello World 2");
+            }
+        };
 
-        List<Apple> apples1 = filterApplesByColor(inventory, "green");
-        List<Apple> apples2 = filterApplesByColor(inventory, "red");
-
-        List<Apple> apples3 = filterApplesByWeight(inventory, 120);
-
-        List<Apple> apples4 = filterApples(inventory, "red",120,true);
-
-
-
+        process(r1);   // ←─打印“Hello World 1”
+        process(r2);    //←─打印“Hello World 2”
+        process(() -> System.out.println("Hello World 3"));   // ←─利用直接传递的Lambda打印“Hello World 3”
     }
-
 }
